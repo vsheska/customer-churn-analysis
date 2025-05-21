@@ -5,3 +5,7 @@ This project trains a simple logistic regression model to predict customer churn
 
 ```bash
 pip install -r requirements.txt
+
+## Run the Project
+```bash
+python src/main.py
