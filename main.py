@@ -29,8 +29,8 @@ def main():
 
     # Step 5: Scale Data
     scaler = StandardScaler()
-    X_train = scale_data(X_train, X_train.columns, scaler)
-    X_test = scale_data(X_test, X_test.columns, scaler)
+    X_train = scale_data(X_train, X_train.columns, scaler, fit=True)
+    X_test = scale_data(X_test, X_test.columns, scaler, fit=False)
 
     # Step 6: Train Model
     model = train_logistic_regression(X_train, y_train)

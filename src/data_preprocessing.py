@@ -14,6 +14,9 @@ def handle_missing_values(df, fill=True):
 def drop_columns(df, columns):
     return df.drop(columns=columns)
 
-def scale_data(df, numerical_columns, scaler):
-    df[numerical_columns] = scaler.fit_transform(df[numerical_columns])
+def scale_data(df, numerical_columns, scaler, fit=False):
+    if fit:
+        df[numerical_columns] = scaler.fit_transform(df[numerical_columns])
+    else:
+        df[numerical_columns] = scaler.transform(df[numerical_columns])
     return df
