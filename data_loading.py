@@ -61,7 +61,7 @@ for i, col in enumerate(numerical_columns, 1):
     sns.boxplot(data=df, x=col)
     plt.title(f"Boxplot of {col}")
 plt.tight_layout()
-plt.savefig('boxplots.png')  # Save the boxplots as a PNG file
+plt.savefig('plots/boxplots.png')  # Save the boxplots as a PNG file
 plt.close()  # Close the plot to prevent it from displaying
 
 # Plot histograms for numerical columns
@@ -71,5 +71,5 @@ for i, col in enumerate(numerical_columns, 1):
     df[col].hist(bins=20)
     plt.title(f"Histogram of {col}")
 plt.tight_layout()
-plt.savefig('histograms.png')  # Save the histograms as a PNG file
+plt.savefig('plots/histograms.png')  # Save the histograms as a PNG file
 plt.close()  # Close the plot to prevent it from displaying
