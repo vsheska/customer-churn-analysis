@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.model_selection import train_test_split
 
 # Load the dataset
 df = pd.read_csv('telco_customer_churn.csv')
@@ -86,3 +87,16 @@ df_encoded = pd.get_dummies(df_cleaned, columns=categorical_columns, drop_first=
 # Check the resulting dataframe
 print(df_encoded.head())
 print(f"Number of columns after encoding: {df_encoded.shape[1]}")
+
+# Define the target variable (e.g., 'Churn') and feature variables
+X = df_encoded.drop(columns=['Churn'])  # Features (all columns except 'Churn')
+y = df_encoded['Churn']  # Target variable (Churn)
+
+# Split the data into training and testing sets (80% training, 20% testing)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Check the shape of the resulting datasets
+print(f"Training features shape: {X_train.shape}")
+print(f"Test features shape: {X_test.shape}")
+print(f"Training target shape: {y_train.shape}")
+print(f"Test target shape: {y_test.shape}")
