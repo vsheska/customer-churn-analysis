@@ -3,6 +3,7 @@ from src.feature_engineering import encode_categorical_columns, convert_to_categ
 from src.model_training import train_logistic_regression, evaluate_model
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from src.plots import plot_histogram, plot_boxplots
 
 def main():
     # Step 1: Load data
@@ -15,6 +16,10 @@ def main():
     # Step 3: Feature Engineering
     df = encode_categorical_columns(df)
     df = convert_to_category(df, 'SeniorCitizen')
+
+    # Generate Plots
+    plot_boxplots(df)
+    plot_histogram(df)
 
     # Step 4: Train-Test Split
     df.rename(columns={'Churn_Yes': 'Churn'}, inplace=True)
