@@ -75,10 +75,14 @@ plt.savefig('plots/histograms.png')  # Save the histograms as a PNG file
 plt.close()  # Close the plot to prevent it from displaying
 
 # Identify categorical columns
-categorical_columns = df.select_dtypes(include=['object']).columns
+categorical_columns = df_filled.select_dtypes(include=['object']).columns
 
 # One-hot encoding of categorical variables
-df_encoded = pd.get_dummies(df, columns=categorical_columns, drop_first=True)
+df_encoded = pd.get_dummies(df_filled, columns=categorical_columns, drop_first=True)
 
 # Check the resulting dataframe
 print(df_encoded.head())
+
+# Check how many unique values each categorical column has
+for col in categorical_columns:
+    print(f"{col}: {df_filled[col].nunique()} unique values")
