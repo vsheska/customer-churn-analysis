@@ -9,8 +9,8 @@ print(df.head())
 # Check the number of rows and columns
 print(f"Dataset shape: {df.shape}")
 
-# Find non-numeric values in 'TotalCharges'
-non_numeric_values = df[~df['TotalCharges'].str.replace(" ", "").str.isnumeric()]['TotalCharges'].unique()
+# Find rows where 'TotalCharges' is not numeric
+non_numeric_values = df[pd.to_numeric(df['TotalCharges'], errors='coerce').isna()]['TotalCharges'].unique()
 
 # Print unique non-numeric values
 print("\nNon-numeric values in 'TotalCharges':")
