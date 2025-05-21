@@ -89,8 +89,8 @@ print(df_encoded.head())
 print(f"Number of columns after encoding: {df_encoded.shape[1]}")
 
 # Define the target variable (e.g., 'Churn') and feature variables
-X = df_encoded.drop(columns=['Churn'])  # Features (all columns except 'Churn')
-y = df_encoded['Churn']  # Target variable (Churn)
+X = df_encoded.drop(columns=['Churn_Yes'])  # Features (all columns except 'Churn')
+y = df_encoded['Churn_Yes']  # Target variable (Churn)
 
 # Split the data into training and testing sets (80% training, 20% testing)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
