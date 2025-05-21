@@ -1,4 +1,6 @@
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Load the dataset
 df = pd.read_csv('telco_customer_churn.csv')
@@ -49,3 +51,23 @@ print(df_filled['TotalCharges'].isnull().sum())
 
 print("\nMissing values in 'TotalCharges' after dropping rows:")
 print(df_dropped['TotalCharges'].isnull().sum())
+
+# Plot box plots for numerical columns
+numerical_columns = df.select_dtypes(include=['float64', 'int64']).columns
+
+plt.figure(figsize=(12, 6))
+for i, col in enumerate(numerical_columns, 1):
+    plt.subplot(2, len(numerical_columns) // 2 + 1, i)
+    sns.boxplot(data=df, x=col)
+    plt.title(f"Boxplot of {col}")
+plt.tight_layout()
+plt.show()
+
+# Plot histograms for numerical columns
+plt.figure(figsize=(12, 6))
+for i, col in enumerate(numerical_columns, 1):
+    plt.subplot(2, len(numerical_columns) // 2 + 1, i)
+    df[col].hist(bins=20)
+    plt.title(f"Histogram of {col}")
+plt.tight_layout()
+plt.show()
