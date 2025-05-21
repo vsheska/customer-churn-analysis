@@ -1,2 +1,7 @@
 # customer-churn-analysis
-Customer churn analysis using Kaggle's Telco Customer Churn Dataset
+This project trains a simple logistic regression model to predict customer churn based on telecom usage data.
+
+## Setup
+
+```bash
+pip install -r requirements.txt
