@@ -17,6 +17,7 @@ def main():
     df = convert_to_category(df, 'SeniorCitizen')
 
     # Step 4: Train-Test Split
+    df.rename(columns={'Churn_Yes': 'Churn'}, inplace=True)
     X = df.drop(columns=['Churn'])
     y = df['Churn']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
