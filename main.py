@@ -1,5 +1,5 @@
 from src.data_preprocessing import load_data, handle_missing_values, drop_columns, scale_data
-from src.feature_engineering import encode_categorical_columns, convert_to_category
+from src.feature_engineering import encode_categorical_columns, convert_to_category, create_advanced_features
 from src.model_training import train_logistic_regression
 from src.model_evaluation import evaluate_model, plot_confusion_matrix, plot_roc_curve, compute_auc
 from sklearn.model_selection import train_test_split
@@ -15,6 +15,9 @@ def main():
     df = drop_columns(df, ['customerID'])
 
     # Feature Engineering
+    df = create_advanced_features(df)
+
+    # Encode categorical columns
     df = convert_to_category(df, 'SeniorCitizen')
     df = encode_categorical_columns(df)
 

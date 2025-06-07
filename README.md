@@ -8,5 +8,5 @@ pip install -r requirements.txt
 ```
 ## Run the Project
 ```bash
-python src/main.py
+python main.py
 ```
