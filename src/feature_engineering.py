@@ -12,6 +12,9 @@ def create_advanced_features(df):
 
     # Customer Behavior Features
     df_new['TotalServices'] = calculate_total_services(df_new)
+    df_new['HasPhoneAndInternet'] = ((df_new['PhoneService'] == 'Yes') &
+                                     (df_new['InternetService'] != 'No')).astype(int)
+    df_new['StreamingServices'] = create_streaming_score(df_new)
     return df_new
 
 def calculate_total_services(df):
@@ -21,3 +24,8 @@ def calculate_total_services(df):
                 'StreamingTV', 'StreamingMovies']
 
     return df[services].apply(lambda x: (x != 'No').sum(), axis=1)
+
+def create_streaming_score(df):
+    """Create a score for streaming services"""
+    streaming_services = ['StreamingTV', 'StreamingMovies']
+    return df[streaming_services].apply(lambda x: (x == 'Yes').sum(), axis=1)
