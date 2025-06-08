@@ -92,15 +92,46 @@ def create_service_interaction(df):
 
 
 def create_financial_risk_score(df):
-    """Create financial risk scores based on payment method and charges"""
+    """Create categorical financial risk scores based on payment method and charges"""
+    # Define payment method categories
     payment_risk = {
-        'Electronic check': 3,
-        'Mailed check': 2,
-        'Bank transfer (automatic)': 1,
-        'Credit card (automatic)': 1
+        'Electronic check': 'High',
+        'Mailed check': 'Medium',
+        'Bank transfer (automatic)': 'Low',
+        'Credit card (automatic)': 'Low'
     }
 
-    payment_factor = df['PaymentMethod'].map(payment_risk)
-    charge_factor = pd.qcut(df['MonthlyCharges'], q=3, labels=[1, 2, 3])
+    # Create charge level categories
+    charge_levels = pd.qcut(df['MonthlyCharges'],
+                            q=3,
+                            labels=['Low', 'Medium', 'High'])
 
-    return payment_factor.astype(float) * charge_factor.astype(float)
+    # Create risk categories based on the combination of payment method and charge level
+    def categorize_risk(row):
+        payment = payment_risk[row['PaymentMethod']]
+        charge = row['ChargeLevel']
+
+        if payment == 'High' and charge == 'High':
+            return 'Very High Risk'
+        elif payment == 'High' or charge == 'High':
+            return 'High Risk'
+        elif payment == 'Medium' and charge == 'Medium':
+            return 'Medium Risk'
+        elif payment == 'Low' and charge == 'Low':
+            return 'Low Risk'
+        else:
+            return 'Moderate Risk'
+
+    # Add charge levels as an intermediate step
+    df = df.copy()
+    df['ChargeLevel'] = charge_levels
+
+    # Create categorical risk scorse
+    risk_categories = df.apply(categorize_risk, axis=1)
+
+    # Convert to ordered categorical
+    return pd.Categorical(risk_categories,
+                          categories=['Low Risk', 'Moderate Risk', 'Medium Risk',
+                                      'High Risk', 'Very High Risk'],
+                          ordered=True)
+
