@@ -78,7 +78,7 @@ class ModelSelector:
         results = []
         scoring = {
             'accuracy': make_scorer(accuracy_score),
-            'precision': make_scorer(precision_score),
+            'precision': make_scorer(precision_score, zero_division=0),
             'recall': make_scorer(recall_score),
             'f1': make_scorer(f1_score),
             'roc_auc': make_scorer(roc_auc_score)
@@ -119,7 +119,7 @@ class ModelSelector:
         # Define scoring metrics
         scoring = {
             'accuracy': make_scorer(accuracy_score),
-            'precision': make_scorer(precision_score),
+            'precision': make_scorer(precision_score, zero_division=0),
             'recall': make_scorer(recall_score),
             'f1': make_scorer(f1_score),
             'roc_auc': make_scorer(roc_auc_score)
