@@ -26,3 +26,50 @@ The project includes:
   - Recall
   - F1 Score 
   - ROC AUC
+
+## Project Structure
+- `data/` : Contains the input dataset
+  - 'telco_customer_churn.csv' : Telecom customer data
+- `src/`
+    - `data_preprocessing.py` : Data cleaning and imputation
+    - `feature_engineering.py` : Composite feature creation
+    - `model_selection.py` : Model comparison and hyperparameter tuning
+    - `model_evaluation.py` : Performance metrics and visualization
+- `outputs/plots/`: Generated visualizations
+    - Feature distributions
+    - Confusion matrix
+    - ROC curve
+
+## Current Results
+Best performing model: Logistic Regression
+- Accuracy: 81.90%
+- ROC AUC Score: 0.8596
+
+## Output Visualizations
+The project generates several visualizations in the `outputs/plots/` directory:
+- Feature distribution histograms
+- Boxplots for numerical features
+- Confusion matrix
+- ROC curve
+
+## Setup
+1. Create and activate a virtual environment:
+```bash
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+```
+2. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+
+## Run the Project
+```bash
+python main.py
+```
+
+## Future Improvements
+- [ ] Feature importance analysis
+- [ ] Model interpretability
+- [ ] Cross-validation results visualization
+- [ ] Model deployment pipeline
