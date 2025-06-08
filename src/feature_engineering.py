@@ -1,9 +1,6 @@
 import pandas as pd
 import numpy as np
 
-def encode_categorical_columns(df):
-    return pd.get_dummies(df, drop_first=True)
-
 def convert_to_category(df, column):
     df[column] = df[column].astype('category')
     return df
@@ -11,29 +8,55 @@ def convert_to_category(df, column):
 def create_advanced_features(df):
     df_new = df.copy()
 
-    # Customer Behavior Features
-    df_new['TotalServices'] = calculate_total_services(df_new)
-    df_new['HasPhoneAndInternet'] = ((df_new['PhoneService'] == 'Yes') &
-                                     (df_new['InternetService'] != 'No')).astype(int)
-    df_new['StreamingServices'] = create_streaming_score(df_new)
+    # Service Count (Ordinal)
+    df_new['TotalServices'] = pd.Categorical(
+        calculate_total_services(df_new),
+        ordered=True
+    )
 
-    # Service Usage Features
-    df_new['SecurityServices'] = create_security_score(df_new)
-
-    # Financial Features
-    df_new['AvgMonthlyCharges'] = df_new['TotalCharges'].astype(float) / df_new['tenure'].replace(0, 1)
-    df_new['ChargePerService'] = df_new['MonthlyCharges'] / df_new['TotalServices'].replace(0, 1)
-    df_new['ContractValue'] = calculate_contract_value(df_new)
-
-    # Temporal Features
+    # Customer Profile Features (Categorical)
     df_new['CustomerAge'] = create_customer_age_categories(df_new)
-    df_new['ContractRisk'] = create_contract_risk_score(df_new)
+    df_new['ServiceUsageProfile'] = create_service_usage_profile(df_new)
+    df_new['ServiceLevel'] = create_service_level(df_new) # Requires TotalServices
 
-    # Interaction Features
-    df_new['ServiceInteraction'] = create_service_interaction(df_new)
+    # Risk Assessment Features (Categorical)
+    df_new['ContractRisk'] = create_contract_risk_score(df_new)
     df_new['FinancialRisk'] = create_financial_risk_score(df_new)
 
+    # Financial Metrics (Numerical)
+    df_new['AvgMonthlyCharges'] = df_new['TotalCharges'].astype(float) / df_new['tenure'].replace(0, 1)
+    df_new['ContractValue'] = calculate_contract_value(df_new)
+
     return df_new
+
+def encode_categorical_columns(df):
+    """
+    Enhanced encoding function that handles ordinal and nominal categories appropriately
+    """
+    df_encoded = df.copy()
+
+    # Identify ordinal (ordered) categorical columns
+    ordinal_columns = [
+        'CustomerAge',
+        'ServiceLevel',
+        'ContractRisk',
+        'FinancialRisk',
+        'ServiceUsageProfile'
+    ]
+
+    # Identify nominal (unordered) categorical columns
+    categorical_columns = df_encoded.select_dtypes(include=['object', 'category']).columns
+    nominal_columns = [col for col in categorical_columns if col not in ordinal_columns]
+
+    # Encode ordinal columns while preserving order
+    for col in ordinal_columns:
+        if col in df_encoded.columns:
+            df_encoded[col] = df_encoded[col].cat.codes
+
+    # One-hot encode nominal columns
+    df_encoded = pd.get_dummies(df_encoded, columns=nominal_columns, drop_first=True)
+
+    return df_encoded
 
 def calculate_total_services(df):
     """Calculate the total number of services per customer"""
@@ -72,23 +95,99 @@ def create_customer_age_categories(df):
     return pd.cut(df['tenure'], bins=bins, labels=labels, right=False)
 
 def create_contract_risk_score(df):
-    """Create risk scores based on contract type and tenure"""
-    contract_risk = {
-        'Month-to-month': 3,
-        'One year': 2,
-        'Two year': 1
-    }
+    """
+    Create categorical contract risk based on contract type and tenure
+    Returns an ordered categorical variable
+    """
 
-    tenure_factor = np.where(df['tenure'] <= 12, 2,
-                             np.where(df['tenure'] <= 24, 1.5, 1))
+    def categorize_contract_risk(row):
+        contract = row['Contract']
+        tenure = row['tenure']
 
-    return df['Contract'].map(contract_risk) * tenure_factor
+        if contract == 'Month-to-month':
+            if tenure <= 12:
+                return 'Very High Risk'
+            else:
+                return 'High Risk'
+        elif contract == 'One year':
+            if tenure <= 12:
+                return 'High Risk'
+            elif tenure <= 24:
+                return 'Medium Risk'
+            else:
+                return 'Low Risk'
+        else:  # Two years
+            if tenure <= 12:
+                return 'Medium Risk'
+            else:
+                return 'Low Risk'
 
-def create_service_interaction(df):
-    """Create interaction scores between different services"""
-    return (df['TotalServices'] *
-            (df['Contract'] != 'Month-to-month').astype(int) *
-            (df['PaperlessBilling'] == 'Yes').astype(int))
+    risk_categories = df.apply(categorize_contract_risk, axis=1)
+
+    return pd.Categorical(
+        risk_categories,
+        categories=['Low Risk', 'Medium Risk', 'High Risk', 'Very High Risk'],
+        ordered=True
+    )
+
+
+def create_service_level(df):
+    """
+    Replace create_service_interaction with a categorical service level indicator
+    """
+
+    def categorize_service_level(row):
+        total_services = row['TotalServices']
+        is_long_term = row['Contract'] != 'Month-to-month'
+        is_paperless = row['PaperlessBilling'] == 'Yes'
+
+        if total_services >= 6 and is_long_term:
+            return 'Premium'
+        elif total_services >= 4 and (is_long_term or is_paperless):
+            return 'Advanced'
+        elif total_services >= 2:
+            return 'Standard'
+        else:
+            return 'Basic'
+
+    service_levels = df.apply(categorize_service_level, axis=1)
+
+    return pd.Categorical(
+        service_levels,
+        categories=['Basic', 'Standard', 'Advanced', 'Premium'],
+        ordered=True
+    )
+
+
+def create_service_usage_profile(df):
+    """
+    Create a categorical service usage profile combining different service types
+    Replaces individual service scores with a more meaningful category
+    """
+
+    def categorize_usage(row):
+        has_security = any(row[service] == 'Yes'
+                           for service in ['OnlineSecurity', 'OnlineBackup', 'DeviceProtection'])
+        has_streaming = any(row[service] == 'Yes'
+                            for service in ['StreamingTV', 'StreamingMovies'])
+        has_tech = row['TechSupport'] == 'Yes'
+
+        if has_security and has_streaming and has_tech:
+            return 'Full Suite User'
+        elif (has_security and has_streaming) or (has_security and has_tech) or (has_streaming and has_tech):
+            return 'Multi-Service User'
+        elif has_security or has_streaming or has_tech:
+            return 'Single-Service User'
+        else:
+            return 'Basic User'
+
+    usage_profiles = df.apply(categorize_usage, axis=1)
+
+    return pd.Categorical(
+        usage_profiles,
+        categories=['Basic User', 'Single-Service User', 'Multi-Service User', 'Full Suite User'],
+        ordered=True
+    )
 
 
 def create_financial_risk_score(df):
