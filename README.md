@@ -1,12 +1,28 @@
-# customer-churn-analysis
-This project trains a simple logistic regression model to predict customer churn based on telecom usage data.
+# Customer Churn Analysis
+This project analyzes and predicts customer churn in a telecom dataset using various machine learning models.
 
-## Setup
+## Project Overview
+The project includes:
+- Feature engineering and data preprocessing
+- Model selection and evaluation of multiple algorithms:
+  - Logistic Regression
+  - Random Forest
+  - Gradient Boosting
+  - XGBoost
+  - SVM
+- Hyperparameter tuning using RandomizedSearchCV
+- Performance visualization using confusion matrices and ROC curves
 
-```bash
-pip install -r requirements.txt
-```
-## Run the Project
-```bash
-python main.py
-```
+## Features
+- Automated model selection pipeline
+- Feature engineering including:
+  - Contract value calculation
+  - Average monthly charges
+  - Numerical feature scaling
+  - Categorical feature encoding
+- Model evaluation metrics:
+  - Accuracy
+  - Precision
+  - Recall
+  - F1 Score 
+  - ROC AUC
