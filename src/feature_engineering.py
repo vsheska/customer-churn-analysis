@@ -103,4 +103,4 @@ def create_financial_risk_score(df):
     payment_factor = df['PaymentMethod'].map(payment_risk)
     charge_factor = pd.qcut(df['MonthlyCharges'], q=3, labels=[1, 2, 3])
 
-    return payment_factor * charge_factor
+    return payment_factor.astype(float) * charge_factor.astype(float)
