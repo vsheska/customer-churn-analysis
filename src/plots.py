@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 import seaborn as sns
 import os
 
@@ -51,13 +52,59 @@ def plot_boxplots(df):
     plt.close(fig)
 
 
-def plot_correlation_matrix(df):
+def plot_correlation_matrix(df, threshold=0.1):
     """
-    Generates a heatmap of the correlation matrix.
+    Generates a heatmap of the correlation matrix with improvements:
+    - Shows only numerical columns
+    - Filters weak correlations
+    - Highlights correlations with target variable (Churn)
+
+    Args:
+        df: DataFrame containing the data
+        threshold: Minimum absolute correlation value to display (default: 0.1)
     """
-    fig, ax = plt.subplots(figsize=(12, 8))
-    correlation_matrix = df.corr()
-    sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', ax=ax)
-    plt.title('Feature Correlation Matrix')
+    # Select only numerical columns
+    numerical_cols = df.select_dtypes(include=['float64', 'int64']).columns
+    correlation_matrix = df[numerical_cols].corr()
+
+    # Create mask for weak correlations
+    mask = np.abs(correlation_matrix) < threshold
+    correlation_matrix_filtered = correlation_matrix.mask(mask, 0)
+
+    # Create the plot
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(correlation_matrix_filtered,
+                annot=True,
+                cmap='coolwarm',
+                center=0,
+                vmin=-1,
+                vmax=1,
+                fmt='.2f')
+
+    plt.title('Feature Correlation Matrix\n(correlations >= {})'.format(threshold))
+    plt.tight_layout()
     save_plot(plt.gcf(), 'correlation_matrix')
     plt.close()
+
+
+def plot_churn_correlations(df):
+    """
+    Plots correlations specifically with the target variable (Churn)
+    """
+    # Calculate correlations with Churn
+    correlations = df.corr()['Churn_Yes'].sort_values(ascending=False)
+
+    # Filter out weak correlations
+    correlations = correlations[abs(correlations) >= 0.1]
+
+    # Create the plot
+    plt.figure(figsize=(10, 6))
+    correlations.plot(kind='bar')
+    plt.title('Feature Correlations with Churn')
+    plt.xlabel('Features')
+    plt.ylabel('Correlation Coefficient')
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    save_plot(plt.gcf(), 'churn_correlations')
+    plt.close()
+

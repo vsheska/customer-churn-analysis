@@ -4,7 +4,7 @@ from src.model_evaluation import evaluate_model, plot_confusion_matrix, plot_roc
     plot_feature_importance, plot_cv_results
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from src.plots import plot_histogram, plot_boxplots, save_plot, plot_correlation_matrix
+from src.plots import plot_histogram, plot_boxplots, save_plot, plot_correlation_matrix, plot_churn_correlations
 from src.model_selection import ModelSelector
 
 def main():
@@ -23,7 +23,8 @@ def main():
     df = encode_categorical_columns(df)
 
     # Generate Plots
-    plot_correlation_matrix(df)
+    plot_correlation_matrix(df, threshold=0.1)  # Only show correlations >= 0.1
+    plot_churn_correlations(df)  # Show correlations with Churn
     plot_boxplots(df)
     plot_histogram(df)
 

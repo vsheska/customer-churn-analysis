@@ -39,6 +39,10 @@ The project includes:
     - Feature distributions
     - Confusion matrix
     - ROC curve
+    - Feature importance plots
+    - Cross-validation results
+    - Correlation matrices
+    - Churn correlation analysis
 
 ## Current Results
 Best performing model: Logistic Regression
@@ -51,6 +55,12 @@ The project generates several visualizations in the `outputs/plots/` directory:
 - Boxplots for numerical features
 - Confusion matrix
 - ROC curve
+- Feature importance plots
+- Cross-validation score distributions
+- Correlation analysis:
+  - Feature correlation matrix
+  - Churn correlation analysis
+
 
 ## Setup
 1. Create and activate a virtual environment:
@@ -69,7 +79,12 @@ python main.py
 ```
 
 ## Future Improvements
-- [ ] Feature importance analysis
-- [ ] Model interpretability
-- [ ] Cross-validation results visualization
+- [x] Feature importance analysis
+- [x] Cross-validation results visualization
+- [x] Enhanced correlation analysis
+- [ ] Model interpretability (SHAP/LIME)
+- [ ] Advanced feature selection
 - [ ] Model deployment pipeline
+- [ ] Interactive dashboard
+- [ ] Automated model retraining
+- [ ] Performance monitoring system
