@@ -59,3 +59,35 @@ def plot_roc_curve(y_true, y_proba, save_plot=None):
 
 def compute_auc(y_true, y_proba):
     return roc_auc_score(y_true, y_proba)
+
+
+def plot_feature_importance(model, feature_names, save_plot_func):
+    """
+    Plots feature importance for tree-based models.
+    """
+    if hasattr(model, 'feature_importances_'):
+        importances = model.feature_importances_
+        indices = np.argsort(importances)[::-1]
+
+        plt.figure(figsize=(10, 6))
+        plt.title('Feature Importances')
+        plt.bar(range(len(indices)), importances[indices])
+        plt.xticks(range(len(indices)),
+                   [feature_names[i] for i in indices],
+                   rotation=45,
+                   ha='right')
+        plt.tight_layout()
+        save_plot_func(plt.gcf(), 'feature_importance')
+        plt.close()
+
+def plot_cv_results(cv_results, save_plot_func):
+    """
+    Visualizes cross-validation scores across different models.
+    """
+    plt.figure(figsize=(10, 6))
+    scores = cv_results['test_score']
+    plt.boxplot(scores)
+    plt.title('Cross-validation Scores Distribution')
+    plt.ylabel('Score')
+    save_plot_func(plt.gcf(), 'cv_scores')
+    plt.close()

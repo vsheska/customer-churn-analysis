@@ -1,9 +1,10 @@
 from src.data_preprocessing import load_data, handle_missing_values, drop_columns, scale_data
 from src.feature_engineering import encode_categorical_columns, convert_to_category, create_advanced_features
-from src.model_evaluation import evaluate_model, plot_confusion_matrix, plot_roc_curve, compute_auc
+from src.model_evaluation import evaluate_model, plot_confusion_matrix, plot_roc_curve, compute_auc, \
+    plot_feature_importance, plot_cv_results
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from src.plots import plot_histogram, plot_boxplots, save_plot
+from src.plots import plot_histogram, plot_boxplots, save_plot, plot_correlation_matrix
 from src.model_selection import ModelSelector
 
 def main():
@@ -22,6 +23,7 @@ def main():
     df = encode_categorical_columns(df)
 
     # Generate Plots
+    plot_correlation_matrix(df)
     plot_boxplots(df)
     plot_histogram(df)
 
@@ -58,7 +60,17 @@ def main():
     print(f"\nBest parameters for {best_model_name}:")
     print(tuning_results['best_params'])
 
-    # Evaluate final model
+    if hasattr(final_model, 'feature_importances_'):
+        plot_feature_importance(final_model, X_train.columns, save_plot)
+
+    # Add cross-validation visualization
+    from sklearn.model_selection import cross_validate
+    cv_results = cross_validate(final_model, X_train, y_train,
+                                cv=5, scoring='accuracy',
+                                return_train_score=True)
+    plot_cv_results(cv_results, save_plot)
+
+    # Evaluate the final model
     print("\nFinal Model Evaluation:")
     y_pred, accuracy, conf_matrix, class_report = evaluate_model(final_model, X_test, y_test)
     plot_confusion_matrix(y_test, y_pred, save_plot)

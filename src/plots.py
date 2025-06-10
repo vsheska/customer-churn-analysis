@@ -58,7 +58,6 @@ def plot_correlation_matrix(df):
     fig, ax = plt.subplots(figsize=(12, 8))
     correlation_matrix = df.corr()
     sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', ax=ax)
-    ax.set_title('Correlation Matrix')
-
-    save_plot(fig, 'correlation_matrix')
-    plt.close(fig)
+    plt.title('Feature Correlation Matrix')
+    save_plot(plt.gcf(), 'correlation_matrix')
+    plt.close()
