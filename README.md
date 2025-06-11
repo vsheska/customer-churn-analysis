@@ -78,6 +78,11 @@ pip install -r requirements.txt
 python main.py
 ```
 
+## Run the Dashboard
+```bash
+streamlit run src/dashboard.py
+```
+
 ## Future Improvements
 - [x] Feature importance analysis
 - [x] Cross-validation results visualization
@@ -85,6 +90,6 @@ python main.py
 - [ ] Model interpretability (SHAP/LIME)
 - [ ] Advanced feature selection
 - [ ] Model deployment pipeline
-- [ ] Interactive dashboard
+- [x] Interactive dashboard
 - [ ] Automated model retraining
 - [ ] Performance monitoring system

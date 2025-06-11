@@ -4,3 +4,5 @@ seaborn~=0.13.2
 scikit-learn~=1.6.1
 numpy~=2.2.6
 xgboost~=3.0.2
+pillow~=11.2.1
+streamlit~=1.45.1
